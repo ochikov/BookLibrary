@@ -1,14 +1,16 @@
 const etherlime = require('etherlime-lib');
 const BookLibrary = require('../build/BookLibrary.json');
+const config = require('./config');
+
 
 const deploy = async (network, secret, etherscanApiKey) => {
-	const infuraApiKey = '6cc519519e394bf787e6142617dbbcc3'
+	const infuraApiKey = config.infuraApiKey;
 	const deployer = new etherlime.InfuraPrivateKeyDeployer(secret, network, infuraApiKey);
 	const result = await deployer.deploy(BookLibrary);
 };
 
-// TX Hash 0x7415410f0d02ceaf59bc65540e0e2cfce8b29ac0e7108505f30b10537a7e3114
-// Address: 0x52e6D87f66023088313e602F8edB234F786F9F0b
+// TX Hash 0x87c3a8a56c4706d02675ceb3dcdbcc0bb776a8a45eedf5c43e72ea365760eab8
+// Address: 0x7dFc0613CA34D40F526f898D3EDbC79AdcbaF493
 
 module.exports = {
 	deploy
