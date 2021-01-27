@@ -4,7 +4,7 @@ const config = require('./config');
 
 const run = async function() {
     const privateKey = config.ganachePrivateKey; // First account from the 10th accounts created with ganache
-    const contractAddress = '0x9eD274314f0fB37837346C425D3cF28d89ca9599'
+    const contractAddress = '0xa00f6A3a3D00979D7B7E23D7C7dF6CC7E255Ad88'
 
     const provider = new ethers.providers.JsonRpcProvider("http://localhost:8545");
 	const wallet = new ethers.Wallet(privateKey, provider);
@@ -12,7 +12,7 @@ const run = async function() {
 
 
     // // Mint Tokens to the deployer
-    const lmtTokenAmount = '2000000000000000000'; // 2 LMT
+    const lmtTokenAmount = ethers.utils.parseEther("2"); // Because ether is with 18 decimals as our token
     const mintTokenTransaction = await limeToken.mint(wallet.address, lmtTokenAmount);
     const mintTokenTransactionReceipt = await mintTokenTransaction.wait();
     if (mintTokenTransactionReceipt.status != 1) {
@@ -25,7 +25,8 @@ const run = async function() {
 
     // Transfer to 0x465b2b6CC578268BA33f24A7e151D144b0E44D29
     let receiverAddress = '0x465b2b6CC578268BA33f24A7e151D144b0E44D29'
-    lmtTokenForTransfer = '1430000000000000000';
+    const lmtTokenForTransfer = ethers.utils.parseEther("1.43"); // Because ether is with 18 decimals as our token
+
     let transfer = await limeToken.transfer(receiverAddress, lmtTokenForTransfer);
 
     let receiverBalance = await limeToken.balanceOf(receiverAddress);
