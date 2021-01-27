@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity ^0.7.0;
+pragma solidity ^0.7.5;
+pragma experimental ABIEncoderV2;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
 
@@ -14,7 +15,7 @@ contract BookLibrary is Ownable {
     bytes32[] public bookKey;
 
     mapping (bytes32 => Book) public books;
-    mapping(address => mapping(bytes32 => bool)) borrowedBook;
+    mapping (address => mapping(bytes32 => bool)) public borrowedBook;
 
     event LogAddedBook(string title, uint copies);
     event BookBorrowed(string title, address user);
@@ -73,6 +74,12 @@ contract BookLibrary is Ownable {
     function getAddressesBorrowedBook(bytes32 bookId) public view returns (address[] memory _book) {
         Book storage book = books[bookId];
         return book.bookBorrowedAddresses;
+    }
+
+    //Return book borrowed by address and title 
+    function getBorrowedByAddress(bytes32 bookId) public view returns (bool _isBorrowed) {
+        bool isBorrowed = borrowedBook[msg.sender][bookId];
+        return isBorrowed;
     }
     
     //Return number of books
