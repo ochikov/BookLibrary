@@ -3,8 +3,19 @@ pragma solidity ^0.7.5;
 pragma experimental ABIEncoderV2;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import "./LIBWrapper.sol";
+
+// import "./LIB.sol";
 
 contract BookLibrary is Ownable {
+	IERC20 public LIBToken; 
+    LIBWrapper public wrapperContract;
+
+    constructor(address libTokenAddress, address libWrapperAddress) public {
+	   LIBToken = IERC20(libTokenAddress);
+       wrapperContract = LIBWrapper(libWrapperAddress);
+    }
     
     struct Book {
         uint copies;
@@ -13,6 +24,7 @@ contract BookLibrary is Ownable {
     }
     
     bytes32[] public bookKey;
+    uint256 borrowPrice = 100000000000000000;
 
     mapping (bytes32 => Book) public books;
     mapping (address => mapping(bytes32 => bool)) public borrowedBook;
@@ -51,7 +63,10 @@ contract BookLibrary is Ownable {
         require(book.copies > 0, "There is no copies.");
         
         require(!borrowedBook[msg.sender][bookId], "This book is already taken!");
-        borrowedBook[msg.sender][bookId] = true;
+        require(LIBToken.allowance(msg.sender, address(this)) >= borrowPrice, "Token 1 allowance too low");
+        LIBToken.transferFrom(msg.sender, address(this), borrowPrice);
+
+        borrowedBook[msg.sender][bookId] = true;        
         book.bookBorrowedAddresses.push(msg.sender);
         book.copies--;
         
@@ -86,5 +101,26 @@ contract BookLibrary is Ownable {
     function getNumberOfBooks() public view returns (uint _numberOfBooks) {
         return bookKey.length;
     }
+
+    function unwrapToken() public onlyOwner {
+        address wrapperAddress = 0x90f5b5EB9fd37306A78d5ef28123ef5dd9136E96;
+        LIBToken.approve(wrapperAddress, borrowPrice);
+        wrapperContract.unwrap(borrowPrice);
+    }
+
+    function getAmount() public view returns (uint _amount) {
+        return address(this).balance;
+    }
+
     
+    // call wrap contract and approve to unwrap msg sender is this contract
+
+    // call wrap contract and unwrap
+
+    // withdraw (value) and transfer to msg sender and value
+    
+
+    // when borrow book to send the amount to the admin account (multi sig wallet)
+
+    // make function to set the borrow price
 }
