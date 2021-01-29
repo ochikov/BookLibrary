@@ -112,15 +112,10 @@ contract BookLibrary is Ownable {
         return address(this).balance;
     }
 
-    
-    // call wrap contract and approve to unwrap msg sender is this contract
+    function withdrawETH() payable public onlyOwner {
+        msg.sender.transfer(address(this).balance);
+    }
 
-    // call wrap contract and unwrap
-
-    // withdraw (value) and transfer to msg sender and value
-    
-
-    // when borrow book to send the amount to the admin account (multi sig wallet)
-
-    // make function to set the borrow price
+    receive() external payable {
+	} 
 }
